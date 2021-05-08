@@ -1,0 +1,5 @@
+DEPENDENCIES = \
+mixedFixedValueSlip/mixedFixedValueSlipFvPatchFields.dep\
+U/maxwellSlipUFvPatchVectorField.dep\
+T/smoluchowskiJumpTFvPatchScalarField.dep\
+rho/fixedRhoFvPatchScalarField.dep

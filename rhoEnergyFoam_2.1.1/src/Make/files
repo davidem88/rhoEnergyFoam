@@ -1,0 +1,3 @@
+rhoEnergyFoam.C
+
+EXE = $(FOAM_APPBIN)/rhoEnergyFoam

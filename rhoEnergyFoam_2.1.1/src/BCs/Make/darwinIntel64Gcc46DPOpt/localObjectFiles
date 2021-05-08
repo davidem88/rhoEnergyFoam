@@ -1,0 +1,5 @@
+LOCAL_OBJECTS = \
+mixedFixedValueSlipFvPatchFields.o\
+maxwellSlipUFvPatchVectorField.o\
+smoluchowskiJumpTFvPatchScalarField.o\
+fixedRhoFvPatchScalarField.o
