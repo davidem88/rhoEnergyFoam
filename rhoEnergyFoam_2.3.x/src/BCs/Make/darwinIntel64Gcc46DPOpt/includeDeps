@@ -1,0 +1,4 @@
+include mixedFixedValueSlip/mixedFixedValueSlipFvPatchFields.dep
+include U/maxwellSlipUFvPatchVectorField.dep
+include T/smoluchowskiJumpTFvPatchScalarField.dep
+include rho/fixedRhoFvPatchScalarField.dep

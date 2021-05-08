@@ -1,0 +1,5 @@
+OBJECTS = \
+$(OBJECTS_DIR)/mixedFixedValueSlipFvPatchFields.o\
+$(OBJECTS_DIR)/maxwellSlipUFvPatchVectorField.o\
+$(OBJECTS_DIR)/smoluchowskiJumpTFvPatchScalarField.o\
+$(OBJECTS_DIR)/fixedRhoFvPatchScalarField.o
