@@ -17,7 +17,7 @@
       forAll( patch , iface )
       {
 
-      ducSensor.boundaryField()[iPatch][iface] = max(-divU.boundaryField()[iPatch][iface]/Foam::sqrt(divU2.boundaryField()[iPatch][iface] + rotU2.boundaryField()[iPatch][iface] + epsilon),0.) ;
+      ducSensor.boundaryField()[iPatch][iface] = max(-divU.boundaryField()[iPatch][iface]/Foam::sqrt(divU2.boundaryField()[iPatch][iface] + rotU2.boundaryField()[iPatch][iface] + eps.boundaryField()[iPatch][iface]),0.) ;
  
       }
      }
