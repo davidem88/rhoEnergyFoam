@@ -41,15 +41,13 @@
 //\*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-//#include "basicPsiThermo.H"
-//#include "turbulenceModel.H"
-//#include "zeroGradientFvPatchFields.H"
-//#include "fixedRhoFvPatchScalarField.H"
 #include "psiThermo.H"
 #include "turbulentFluidThermoModel.H"
-#include "directionInterpolate.H"
+#include "fixedRhoFvPatchScalarField.H"
+//#include "directionInterpolate.H"
 #include "localEulerDdtScheme.H"
 #include "fvcSmooth.H"
+//#include "Interpolation_IBM.C"
 
 #include <fstream>      // std::ofstream
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -98,20 +96,10 @@
 // Main
 int main(int argc, char *argv[])
 {
-/*
-    #include "setRootCase.H"
-
-    #include "createTime.H"
-    #include "createMeshNoClear.H"
-    #include "createFields.H"
-    #include "createFieldRefs.H"
-//    #include "readThermophysicalProperties.H"
-    #include "createTimeControls.H"
-//    #include "readTimeControls.H"
-*/
     #define NO_CONTROL
     #include "postProcess.H"
 
+//  #include "addCheckCaseOptions.H"
     #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
@@ -121,15 +109,23 @@ int main(int argc, char *argv[])
 
     #include "readThermophysicalProperties.H"
     #include "variables.H"
+//  #include "Set_Immersed_Boundary.H"
+
+
     //  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+    turbulence->validate();
 
     Info<< nl << "Starting time loop" << endl;
     Info<< "Start Timing = " << runTime.clockTimeIncrement() << " s"
         << nl << endl;
 
-    while (runTime.loop()) //Start time loop
+//  while (runTime.loop()) //Start time loop
+    while (runTime.run()) //Start time loop
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
+        runTime++;
+
 
 
 //     Saving quantities at preavious time step
@@ -170,22 +166,23 @@ int main(int argc, char *argv[])
 //
 // 
         volScalarField muEff(turbulence->muEff());
+        volTensorField tauMC("tauMC", muEff*dev2(Foam::T(fvc::grad(U))));
         surfaceScalarField  muave  = fvc::interpolate(muEff);//mu at cell faces
 //
         volScalarField k("k", thermo.Cp()*muEff/Pr);//thermal diffusivity
 //
         surfaceScalarField kave=fvc::interpolate(k);//k at cell faces. alphaEff=muEff/Prt
         //momentum viscous flux
-        surfaceVectorField momVisFlux = muave*(fvc::snGrad(U)*mesh.magSf() -  2./3.*vecDivU*mesh.magSf());
+        surfaceVectorField momVisFlux = muave*(fvc::snGrad(U)*mesh.magSf());//-  2./3.*vecDivU*mesh.magSf()) ;
         //energy viscous flux
         surfaceScalarField heatFlux =  kave*fvc::snGrad(T)*mesh.magSf();
-        surfaceScalarField visWork  =  momVisFlux & Uave;
+        surfaceScalarField visWork  =  (momVisFlux + fvc::dotInterpolate(mesh.Sf(), tauMC) ) & Uave;
         enVisFlux = heatFlux + visWork ;
 //
         // Total fluxes, Eulerian + viscous 
         surfaceScalarField rhoFlux   = rhoave*phi                                     ;
         momFlux                      = rhoave*Uave*phi + pave*mesh.Sf() - momVisFlux  ;
-        enFlux                       = rhoave*Have*phi - enVisFlux                    ;
+        enFlux                       = rhoave*Have*phi - enVisFlux        ;
 //
         if(convArtDiff)
         {
@@ -193,18 +190,21 @@ int main(int argc, char *argv[])
         }
 //
 // 
+        
         volScalarField rhoFl = fvc::div(rhoFlux);
-        volVectorField momFl = fvc::div(momFlux);
-        volScalarField enFl  = fvc::div(enFlux);
+        volVectorField momFl = fvc::div(momFlux) - fvc::div(tauMC);
+        volScalarField enFl  = fvc::div(enFlux)  ;
+
         // RK sub-step
         rho  = rhoOld + rkCoeff[cycle]*runTime.deltaT()*(
                 - rhoFl);         
 //
         rhoU = rhoUOld + rkCoeff[cycle]*runTime.deltaT()*(
-                - momFl);
+                - momFl );
 //
+        volScalarField work = U & ones_vec ;
         rhoE = rhoEOld + rkCoeff[cycle]*runTime.deltaT()*(
-                -enFl);
+                -enFl );
 
         //Update primitive variables and boundary conditions
         U.ref() = rhoU() / rho();
@@ -227,9 +227,11 @@ int main(int argc, char *argv[])
         p.correctBoundaryConditions();
 	/*Edited*/        
 	rho.boundaryFieldRef() = psi.boundaryField()*p.boundaryField(); //psi=1/(R*T)
-        runTime.write();
-        turbulence->correct(); //turbulence model
+
+
        }//end of RK time integration
+       turbulence->correct(); //turbulence model
+       runTime.write();
 //
         #include "diagnostics.H" //print tke on diagnostics.dat
         #include "step.H"        //Evaluate Courant Number
