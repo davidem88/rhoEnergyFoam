@@ -149,16 +149,18 @@ int main(int argc, char *argv[])
 //
 // 
         volScalarField muEff(turbulence->muEff());
+        volTensorField tauMC("tauMC", muEff*dev2(Foam::T(fvc::grad(U))));
+
         surfaceScalarField  muave  = fvc::interpolate(muEff);//mu at cell faces
 //
         volScalarField k("k", thermo.Cp()*muEff/Pr);//thermal diffusivity
 //
         surfaceScalarField kave=fvc::interpolate(k);//k at cell faces. alphaEff=muEff/Prt
         //momentum viscous flux
-        surfaceVectorField momVisFlux = muave*(fvc::snGrad(U)*mesh.magSf() -  2./3.*vecDivU*mesh.magSf());
+        surfaceVectorField momVisFlux = muave*(fvc::snGrad(U)*mesh.magSf() ;
         //energy viscous flux
         surfaceScalarField heatFlux =  kave*fvc::snGrad(T)*mesh.magSf();
-        surfaceScalarField visWork  =  momVisFlux & Uave;
+        surfaceScalarField visWork  =  (momVisFlux + fvc::dotInterpolate(mesh.Sf(), tauMC) ) & Uave;
         enVisFlux = heatFlux + visWork ;
 //
         // Total fluxes, Eulerian + viscous 
@@ -173,7 +175,7 @@ int main(int argc, char *argv[])
 //
 // 
         volScalarField rhoFl = fvc::div(rhoFlux);
-        volVectorField momFl = fvc::div(momFlux);
+        volVectorField momFl = fvc::div(momFlux) - fvc::div(tauMC);
         volScalarField enFl  = fvc::div(enFlux);
         // RK sub-step
         rho  = rhoOld + rkCoeff[cycle]*runTime.deltaT()*(
