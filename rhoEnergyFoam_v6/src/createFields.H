@@ -21,6 +21,8 @@ autoPtr<psiThermo> pThermo
 );
 psiThermo& thermo = pThermo();
 volScalarField& e = thermo.he();
+volScalarField cv = thermo.Cv();
+
 
 
 
@@ -108,7 +110,13 @@ surfaceScalarField neg
     dimensionedScalar("neg", dimless, -1.0)
 );
 
-   #include "readInput.H"
+#include "readInput.H"
+if (runTime.time().value() == 0.0 && channelCase)
+{
+    #include "init_channel.H"
+}
+
+
 volScalarField eps
 (
     IOobject
@@ -120,6 +128,20 @@ volScalarField eps
     mesh,
     dimensionedScalar("eps", dimensionSet(0,0,-2,0,0,0,0), epsilon)
 );
+
+
+dimensionedScalar dpdx_add
+(
+ "dpdx_add",
+ dimensionSet(1,-2,-2,0,0,0,0),
+ scalar(0.)
+);
+//
+scalar dpdx_temp = 0.;
+scalar drhoUx    = 0.;
+scalar Tbulk     = 0.;
+scalar vol       = 0.;
+scalar rhob      = 0.;
 
 
 /*
@@ -143,9 +165,9 @@ autoPtr<compressible::turbulenceModel> turbulence
 //    #include "pressureGrad.H"
 //  define RK coefficient 
 
-    scalarList rkCoeff(0) ;
+scalarList rkCoeff(0) ;
 
-    rkCoeff.append(1./4.) ;
-    rkCoeff.append(1./3.) ;
-    rkCoeff.append(1./2.) ;
-    rkCoeff.append(1./1.) ;
+rkCoeff.append(1./4.) ;
+rkCoeff.append(1./3.) ;
+rkCoeff.append(1./2.) ;
+rkCoeff.append(1./1.) ;

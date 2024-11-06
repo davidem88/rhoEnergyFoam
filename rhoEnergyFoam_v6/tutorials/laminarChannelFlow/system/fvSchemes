@@ -1,0 +1,72 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+fluxScheme      Kurganov;
+
+ddtSchemes
+{
+    default         Euler;//Euler;
+//  ddt(rho,nuTilda)    Euler;//    backward;
+//  ddt(rho,epsilon)   steadyState;// Euler;//    backward;
+//  ddt(rho,phit)    Euler;//    backward;
+//  ddt(rho,k)       steadyState;// backward;
+}
+
+gradSchemes
+{
+    default      leastSquares;
+}
+
+divSchemes
+{
+    default         Gauss midPoint;
+    reconstruct(p)   vanLeer;
+    reconstruct(M)   vanLeerV;
+    reconstruct(T)   vanLeer;
+    reconstruct(rho) vanLeer;
+    reconstruct(U)   vanLeerV;
+    div(phit,k)      Gauss limitedLinear 1;
+    div(phit,epsilon) Gauss limitedLinear 1;
+    div((nuEff*dev2(T(grad(U))))) Gauss limitedLinear 1;
+    div(tauMC) Gauss limitedLinear phi 1;
+    div(U) Gauss midPoint;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         midPoint;
+    reconstruct(rho) vanLeer;
+    reconstruct(U)  vanLeerV;
+    reconstruct(T)  vanLeer;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+wallDist
+{
+    method          meshWave;
+}
+
+// ************************************************************************* //

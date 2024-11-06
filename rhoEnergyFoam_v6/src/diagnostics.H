@@ -13,6 +13,6 @@
      {
        std::ofstream diagn;
        diagn.open ("diagnostics.dat", std::ofstream::out | std::ofstream::app);
-       diagn <<  runTime.timeName() << " " <<  tke  << " " <<std::endl;
+       diagn <<  runTime.timeName() << " " <<  tke  << " " << dpdx_prt.value() << " " << drhoUx_prt.value() <<" "<<Tbulk_prt.value()<<" "<<rhob_prt.value() <<std::endl;
        diagn.close();
 }

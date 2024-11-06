@@ -1,0 +1,13 @@
+8,13c8,12
+< // 
+<       scalar dpdx_temp = 0;
+<       scalar drhoUx    = 0;
+<       scalar Tbulk     = 0;
+<       scalar vol       = 0;
+<       scalar rhob      = 0;
+---
+>       dpdx_temp = 0.;
+>       drhoUx    = 0.;
+>       Tbulk     = 0.;
+>       vol       = 0.;
+>       rhob      = 0.;

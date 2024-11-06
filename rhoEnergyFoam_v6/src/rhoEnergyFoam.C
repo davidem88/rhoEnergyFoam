@@ -195,16 +195,19 @@ int main(int argc, char *argv[])
         volVectorField momFl = fvc::div(momFlux) - fvc::div(tauMC);
         volScalarField enFl  = fvc::div(enFlux)  ;
 
+        if (channelCase){
+         #include "pressureGrad.H" // forcing term to keep a constant mass flow rate in channel flow
+        }
         // RK sub-step
         rho  = rhoOld + rkCoeff[cycle]*runTime.deltaT()*(
                 - rhoFl);         
 //
         rhoU = rhoUOld + rkCoeff[cycle]*runTime.deltaT()*(
-                - momFl );
+                - momFl + dpdx_add*ones_vec);
 //
         volScalarField work = U & ones_vec ;
         rhoE = rhoEOld + rkCoeff[cycle]*runTime.deltaT()*(
-                -enFl );
+                -enFl + dpdx_add*work );
 
         //Update primitive variables and boundary conditions
         U.ref() = rhoU() / rho();
@@ -227,6 +230,10 @@ int main(int argc, char *argv[])
         p.correctBoundaryConditions();
 	/*Edited*/        
 	rho.boundaryFieldRef() = psi.boundaryField()*p.boundaryField(); //psi=1/(R*T)
+
+ 	if (Tbulk_target>0.&& channelCase) {
+         #include "tbforce.H"
+        }
 
 
        }//end of RK time integration

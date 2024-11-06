@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     rhoEnergyFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         100.0;
+
+deltaT          0.00000000001;
+
+writeControl adjustableRunTime;
+
+writeInterval   10;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+timeFormat      general;
+
+timePrecision   8;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           0.8;
+
+pressArtDiff    false;//true; //activate artificial diffusion on pressure
+convArtDiff     false;//true; //activate artificial diffusion on pressure
+channelFlow     true; //
+
+ku        0.25;
+kp        0.25;
+Tbulk_target       0.8;
+
+rm        0.3;  // Bulk Mach number of channel flow
+restart  true;
+
+ducLevelPress       1.05; // pressure diffusion threshold
+ducLevelConv        1.05; // convective diffusion threshold
+
+epsilon             3.15; // u_infty^2
+minfty              2.25; // Reference Mach^2 number needed by AUSM flux (free stream Mach number)
+
+channelCase         false; // True for plane channel flow, false (default) for any other flow

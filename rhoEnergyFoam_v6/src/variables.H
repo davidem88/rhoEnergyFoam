@@ -405,6 +405,12 @@
          mesh,
          dimensionedVector("ones_vec",dimless,vector(1,0,0))
          );
+         dimensionedScalar rhob_prt
+         (
+          "rhob_prt",
+          dimensionSet(0,0,0,0,0,0,0),
+          scalar(0.)
+         );
          dimensionedScalar dpdx_prt
          (
          "dpdx_prt",

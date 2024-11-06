@@ -26,5 +26,14 @@ scalar epsilon =
 scalar minfty =
     runTime.controlDict().lookupOrDefault("minfty",0.);
 
+scalar rm =
+    runTime.controlDict().lookupOrDefault("rm",0.2);
+
+scalar Tbulk_target =
+    runTime.controlDict().lookupOrDefault("Tbulk_target",0.);
+
+const bool channelCase =
+    runTime.controlDict().lookupOrDefault("channelCase", false);
+
 
    
