@@ -18,7 +18,7 @@
 //
       tbulk = tbulk/voll ; 
       drhoUxl= drhoUxl/voll ;
-      tbulk = tbulk/drhoUx ;
+      tbulk = tbulk/drhoUxl ;
 
       Tbulk_target = trelax*Tbulk_target + (1.-trelax)*tbulk ;
 //
