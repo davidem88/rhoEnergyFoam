@@ -64,4 +64,4 @@ ducLevelConv        1.05; // convective diffusion threshold
 epsilon             3.15; // u_infty^2
 minfty              2.25; // Reference Mach^2 number needed by AUSM flux (free stream Mach number)
 
-channelCase         false; // True for plane channel flow, false (default) for any other flow
+channelCase         true; // True for plane channel flow, false (default) for any other flow
