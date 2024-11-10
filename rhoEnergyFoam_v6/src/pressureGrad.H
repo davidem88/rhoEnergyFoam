@@ -27,6 +27,8 @@
       reduce(drhoUx,sumOp<scalar>())   ;//MPI all reduce
       reduce(Tbulk,sumOp<scalar>())    ;//MPI all reduce
       reduce(vol      ,sumOp<scalar>());
+      reduce(rhob     ,sumOp<scalar>());
+      
       dpdx_add   = dpdx_temp/vol*dpdx;
       dpdx_prt   = dpdx_add;
       rhob       = rhob/vol;
